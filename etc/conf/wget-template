@@ -1034,11 +1034,14 @@ then
     read -s -p "Password:              " password_c
 
     echo -e "user = $username_c\npassword = $password_c\n" > "$ESG_BASICAUTH"
+  else
+    username_c=$(awk '/user = / { print $3; }' "$ESG_BASICAUTH")
+    password_c=$(awk '/password = / { print $3; }' "$ESG_BASICAUTH")
   fi
 
   (( verbsose )) && echo "overriding env-var (old):  PKI_WGET_OPTS := '$PKI_WGET_OPTS'"
   unset PKI_WGET_OPTS
-  PKI_WGET_OPTS="--auth-no-challenge --config=$ESG_BASICAUTH"
+  PKI_WGET_OPTS="--auth-no-challenge --user=$username_c --password=$password_c"
   (( verbsose )) && echo "overriding env-var (new):  PKI_WGET_OPTS := '$PKI_WGET_OPTS'"
 
 fi
